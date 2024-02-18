@@ -1,3 +1,7 @@
+/**
+ * Archivo script.js
+ */
+
 const { Telegraf } = require('telegraf');
 const mitoken = require('./variables.js');
 const bot = new Telegraf(mitoken);
@@ -5,36 +9,41 @@ const axios = require('axios');
 const { obtenerJuegos } = require('./api.js');
 const { Markup } = require('telegraf');
 
-// Teclado
+/**
+ * Teclado principal del bot.
+ * @type {Markup}
+ */
 const commandKeyboard = Markup.keyboard([
     ['🎮 Juegos Mensuales', '🎮 Juegos Semanales'],
     ['📚 Libros con Rating', '📚 libros por Género'],
     ['⬜Otros comandos⬜']
 ]).resize();
 
-// Teclado plataformas
+/**
+ * Teclado para seleccionar la plataforma de juegos.
+ * @type {Markup}
+ */
 const juegosKeyboard = Markup.keyboard([
     ['PC', 'PS5', 'PS4'],
     ['Switch', 'XBX/S', 'XBO'],
     ['⬅️ Volver al menú principal'] 
 ]).resize();
 
-
+/**
+ * Maneja los mensajes relacionados con las plataformas de juegos.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.hears(['PC', 'PS5', 'PS4', 'Switch', 'XBX/S', 'XBO', '⬅️ Volver al menú principal'], async (ctx) => {
     const plataforma = ctx.message.text;
-    
 
     if (plataforma === '⬅️ Volver al menú principal') {
-
         ctx.reply('¡Hola! ' + ctx.from.first_name + ' ' + ctx.from.last_name + ' Soy un bot de noticias de videojuegos y libros. Usa los siguientes comandos para interactuar conmigo:', commandKeyboard);
         return; 
     }
     
     let tituloComando = 'Juegos Mensuales'; 
-    
 
     if (ctx.message.reply_to_message && ctx.message.reply_to_message.text) {
-
         tituloComando = ctx.message.reply_to_message.text.split(' ')[1];
     }
     
@@ -42,23 +51,42 @@ bot.hears(['PC', 'PS5', 'PS4', 'Switch', 'XBX/S', 'XBO', '⬅️ Volver al menú
     await obtenerJuegos(url, plataforma, ctx, tituloComando);
 });
 
+/**
+ * Mensaje inicial del bot.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.start((ctx) => {
     ctx.reply('¡Hola! ' + ctx.from.first_name + ' ' + ctx.from.last_name + ' Soy un bot de noticias de videojuegos y libros. Usa los siguientes comandos para interactuar conmigo:', commandKeyboard);
 });
 
-
+/**
+ * Maneja el comando para mostrar los juegos mensuales.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.hears('🎮 Juegos Mensuales', (ctx) => {
     ctx.reply('Selecciona una plataforma:', juegosKeyboard);
 });
 
+/**
+ * Maneja el comando para mostrar los juegos semanales.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.hears('🎮 Juegos Semanales', (ctx) => {
     ctx.reply('Selecciona una plataforma:', juegosKeyboard);
 });
 
+/**
+ * Maneja el comando para mostrar los otros comandos disponibles.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.hears('⬜Otros comandos⬜', (ctx) => {
     ctx.reply('Estos son los otros comandos restantes: - /librosAutor - /librosTitulo (pulsa espacio tras el comando y escribe el nombre del titulo/autor (prueba: Wuthering Heights y Emily Bronte)de la obra)');
 });
 
+/**
+ * Maneja el comando para mostrar los libros con rating.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.hears('📚 Libros con Rating', async (ctx) => {
     try {
         const response = await axios.get('https://books-api7.p.rapidapi.com/books/find/rating', {
@@ -73,7 +101,6 @@ bot.hears('📚 Libros con Rating', async (ctx) => {
             }
         });
 
-        
         const librosTexto = response.data.map(libro => `${libro.title} - Autor: ${libro.author.first_name} ${libro.author.last_name} - Puntuación: ${libro.rating}`).join('\n\n');
         
         ctx.reply(`Últimos libros con puntuación entre 3.5 y 5:\n\n${librosTexto}`);
@@ -83,6 +110,10 @@ bot.hears('📚 Libros con Rating', async (ctx) => {
     }
 });
 
+/**
+ * Maneja el comando para mostrar los libros por género.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.hears('📚 libros por Género', async (ctx) => {
     const generos = ['Fiction', 'Fantasy', 'Classics', 'Philosophy', 'Christian Fiction', 'Religion', 'Christianity', 'Faith', 'Theology', '⬅️ Volver al menú principal'];
     const generosKeyboard = Markup.keyboard(generos, { columns: 2 }).resize();
@@ -90,15 +121,16 @@ bot.hears('📚 libros por Género', async (ctx) => {
     ctx.reply('Selecciona un género:', generosKeyboard);
 });
 
-// Selecc por género. 
+/**
+ * Maneja la selección de género de libros.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.hears(['Fiction', 'Fantasy', 'Classics', 'Philosophy', 'Christian Fiction', 'Religion', 'Christianity', 'Faith', 'Theology', '⬅️ Volver al menú principal'], async (ctx) => {
     const genero = ctx.message.text;
 
-    
     if (genero === '⬅️ Volver al menú principal') {
-        
         ctx.reply('¡Hola! ' + ctx.from.first_name + ' ' + ctx.from.last_name + ' Soy un bot de noticias de videojuegos y libros. Usa los siguientes comandos para interactuar conmigo:', commandKeyboard);
-        return; // Salir de la función
+        return; 
     }
 
     try {
@@ -119,6 +151,10 @@ bot.hears(['Fiction', 'Fantasy', 'Classics', 'Philosophy', 'Christian Fiction', 
     }
 });
 
+/**
+ * Maneja el comando para buscar libros por título.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.command('librosTitulo', async (ctx) => {
     const titulo = ctx.message.text.substring(14);
     try {
@@ -143,6 +179,10 @@ bot.command('librosTitulo', async (ctx) => {
     }
 });
 
+/**
+ * Maneja el comando para buscar libros por autor.
+ * @param {Context} ctx Contexto del bot.
+ */
 bot.command('librosAutor', async (ctx) => {
     const nombreAutor = ctx.message.text.substring(13);
     const [fname, lname] = nombreAutor.split(' ');
@@ -169,4 +209,7 @@ bot.command('librosAutor', async (ctx) => {
     }
 });
 
+/**
+ * Inicia el bot.
+ */
 bot.launch();

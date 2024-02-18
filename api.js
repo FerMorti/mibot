@@ -1,5 +1,16 @@
+/**
+ * Archivo api.js
+ */
+
 const axios = require('axios');
 
+/**
+ * Obtiene los juegos según la plataforma y el tipo de comando.
+ * @param {string} url URL de la API para obtener los juegos.
+ * @param {string} platform Plataforma de los juegos.
+ * @param {Context} ctx Contexto del bot.
+ * @param {string} tituloComando Título del comando seleccionado.
+ */
 async function obtenerJuegos(url, platform, ctx, tituloComando) {
     try {
         const response = await axios.get(url, {
@@ -31,7 +42,10 @@ async function obtenerJuegos(url, platform, ctx, tituloComando) {
 
 module.exports = { obtenerJuegos };
 
-// Para /librosRating
+/**
+ * Obtiene libros por rating.
+ * @returns {Promise<Array>} Promesa que se resuelve con los libros.
+ */
 exports.getLibrosPorRating = async () => {
     const options = {
         method: 'GET',
@@ -55,7 +69,11 @@ exports.getLibrosPorRating = async () => {
     }
 };
 
-// Para /librosGenero
+/**
+ * Obtiene libros por género.
+ * @param {Array<string>} generos Lista de géneros.
+ * @returns {Promise<Array>} Promesa que se resuelve con los libros.
+ */
 exports.getLibrosPorGenero = async (generos) => {
     const options = {
         method: 'GET',
@@ -77,7 +95,11 @@ exports.getLibrosPorGenero = async (generos) => {
     }
 };
 
-// Para /librosTitulo
+/**
+ * Obtiene libros por título.
+ * @param {string} titulo Título del libro.
+ * @returns {Promise<Array>} Promesa que se resuelve con los libros.
+ */
 exports.getLibrosPorTitulo = async (titulo) => {
     const options = {
         method: 'GET',
@@ -99,7 +121,11 @@ exports.getLibrosPorTitulo = async (titulo) => {
     }
 };
 
-// Para /librosAutor
+/**
+ * Obtiene libros por autor.
+ * @param {string} nombreAutor Nombre completo del autor.
+ * @returns {Promise<Array>} Promesa que se resuelve con los libros.
+ */
 exports.getLibrosPorAutor = async (nombreAutor) => {
     const [fname, lname] = nombreAutor.split(' ');
     const options = {
