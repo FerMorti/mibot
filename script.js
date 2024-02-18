@@ -9,6 +9,13 @@ const axios = require('axios');
 const { obtenerJuegos } = require('./api.js');
 const { Markup } = require('telegraf');
 
+// Verificar si se está ejecutando con nodemon
+if (process.env.NODE_ENV === 'development') {
+    console.log('La aplicación está ejecutándose con nodemon.');
+}
+
+// Tu código principal de la aplicación aquí...
+
 /**
  * Teclado principal del bot.
  * @type {Markup}
