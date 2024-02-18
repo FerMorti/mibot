@@ -150,7 +150,7 @@ bot.hears(['Fiction', 'Fantasy', 'Classics', 'Philosophy', 'Christian Fiction', 
                 'X-RapidAPI-Host': 'books-api7.p.rapidapi.com'
             }
         });
-        const librosTexto = response.data.map(libro => `${libro.title} - Autor: ${libro.author.first_name} ${libro.author.last_name} - Género: ${genero}`).join('\n\n');
+        const librosTexto = response.data.slice(0, 10).map(libro => `${libro.title} - Autor: ${libro.author.first_name} ${libro.author.last_name} - Género: ${genero}`).join('\n\n');
         ctx.reply(`Libros del género ${genero}:\n\n${librosTexto}`);
     } catch (error) {
         console.error(error);
